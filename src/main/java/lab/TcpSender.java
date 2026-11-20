@@ -8,6 +8,7 @@ public final class TcpSender {
     public final ByteStream input;
     private final Wrap32 isn;
     private final long initialRto;
+
     public TcpSender(ByteStream input, Wrap32 isn, long initialRto) {
         this.input = input;
         this.isn = isn;

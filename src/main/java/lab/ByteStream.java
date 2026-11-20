@@ -10,10 +10,17 @@ public final class ByteStream {
         this.capacity = capacity;
     }
 
-    public void setError() { error = true; }
-    public boolean hasError() { return error; }
+    public void setError() {
+        error = true;
+    }
 
-    /** Provided reader helper. peek() may return just the first contiguous chunk. */
+    public boolean hasError() {
+        return error;
+    }
+
+    /**
+     * Provided reader helper. peek() may return just the first contiguous chunk.
+     */
     public byte[] read(int limit) {
         var result = new java.io.ByteArrayOutputStream();
         while (result.size() < limit && bytesBuffered() > 0) {

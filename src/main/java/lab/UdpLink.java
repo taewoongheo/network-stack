@@ -4,7 +4,9 @@ import java.io.*;
 import java.net.*;
 import java.util.Arrays;
 
-/** A point-to-point virtual Ethernet cable. One UDP datagram carries one Ethernet frame. */
+/**
+ * A point-to-point virtual Ethernet cable. One UDP datagram carries one Ethernet frame.
+ */
 final class UdpLink implements AutoCloseable {
     final DatagramSocket socket;
     final NetworkInterface nic;
@@ -16,16 +18,25 @@ final class UdpLink implements AutoCloseable {
         socket.setSoTimeout(2);
         nic = new NetworkInterface(0x020000000000L | Integer.toUnsignedLong(ip), ip, frame -> {
             byte[] data = frame.encode();
-            try { socket.send(new DatagramPacket(data, data.length)); }
-            catch (PortUnreachableException ignored) { /* other endpoint may start later */ }
-            catch (IOException e) { throw new UncheckedIOException(e); }
+            try {
+                socket.send(new DatagramPacket(data, data.length));
+            } catch (PortUnreachableException ignored) { /* other endpoint may start later */ } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         });
     }
+
     void poll() throws IOException {
         var datagram = new DatagramPacket(buffer, buffer.length);
-        try { socket.receive(datagram); }
-        catch (SocketTimeoutException | PortUnreachableException e) { return; }
+        try {
+            socket.receive(datagram);
+        } catch (SocketTimeoutException | PortUnreachableException e) {
+            return;
+        }
         nic.receiveFrame(Wire.Frame.decode(Arrays.copyOf(buffer, datagram.getLength())));
     }
-    public void close() { socket.close(); }
+
+    public void close() {
+        socket.close();
+    }
 }

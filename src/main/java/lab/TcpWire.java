@@ -4,7 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Optional;
 
-/** TCP header subset used by the lab, including the IPv4 pseudo-header checksum. */
+/**
+ * TCP header subset used by the lab, including the IPv4 pseudo-header checksum.
+ */
 public record TcpWire(int sourcePort, int destinationPort, Segment segment, Ack ack) {
     public Wire.Ip packet(int src, int dst) {
         byte[] data = segment.payload();
@@ -17,6 +19,7 @@ public record TcpWire(int sourcePort, int destinationPort, Segment segment, Ack 
         b.putShort(16, (short) checksum(src, dst, b.array()));
         return new Wire.Ip(src, dst, 64, 6, b.array());
     }
+
     public static TcpWire decode(Wire.Ip ip) {
         byte[] data = ip.payload();
         Wire.require(ip.protocol() == 6 && data.length >= 20 && checksum(ip.src(), ip.dst(), data) == 0);
@@ -31,6 +34,7 @@ public record TcpWire(int sourcePort, int destinationPort, Segment segment, Ack 
         return new TcpWire(b.getShort(0) & 65535, b.getShort(2) & 65535, segment,
                 new Ack(number, b.getShort(14) & 65535, rst));
     }
+
     private static int checksum(int src, int dst, byte[] data) {
         byte[] bytes = ByteBuffer.allocate(data.length + 12).putInt(src).putInt(dst)
                 .putShort((short) 6).putShort((short) data.length).put(data).array();

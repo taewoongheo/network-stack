@@ -3,7 +3,9 @@ package lab;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-/** Ethernet II, Ethernet/IPv4 ARP, and unfragmented IPv4 with no options. Network byte order. */
+/**
+ * Ethernet II, Ethernet/IPv4 ARP, and unfragmented IPv4 with no options. Network byte order.
+ */
 public final class Wire {
     public static final int IPV4 = 0x0800, ARP = 0x0806;
     public static final long BROADCAST = 0xffffffffffffL;
@@ -15,6 +17,7 @@ public final class Wire {
             putMac(b, src);
             return b.putShort((short) type).put(payload).array();
         }
+
         public static Frame decode(byte[] bytes) {
             require(bytes.length >= 14);
             var b = ByteBuffer.wrap(bytes);
@@ -31,6 +34,7 @@ public final class Wire {
             putMac(b, targetMac);
             return b.putInt(targetIp).array();
         }
+
         public static Arp decode(byte[] bytes) {
             require(bytes.length >= 28);
             var b = ByteBuffer.wrap(bytes);
@@ -50,13 +54,14 @@ public final class Wire {
             b.putShort(10, (short) checksum(b.array(), 20));
             return b.put(payload).array();
         }
+
         public static Ip decode(byte[] bytes) {
             require(bytes.length >= 20 && bytes[0] == 0x45 && checksum(bytes, 20) == 0);
             var b = ByteBuffer.wrap(bytes);
             int length = Short.toUnsignedInt(b.getShort(2));
             require(length >= 20 && length <= bytes.length && (b.getShort(6) & 0x3fff) == 0);
             return new Ip(b.getInt(12), b.getInt(16), bytes[8] & 255, bytes[9] & 255,
-                          Arrays.copyOfRange(bytes, 20, length));
+                    Arrays.copyOfRange(bytes, 20, length));
         }
     }
 
@@ -69,19 +74,23 @@ public final class Wire {
         while ((sum >>> 16) != 0) sum = (sum & 65535) + (sum >>> 16);
         return (int) ~sum & 65535;
     }
+
     private static void putMac(ByteBuffer b, long addr) {
         for (int shift = 40; shift >= 0; shift -= 8) b.put((byte) (addr >>> shift));
     }
+
     private static long mac(ByteBuffer b) {
         long addr = 0;
         for (int i = 0; i < 6; i++) addr = (addr << 8) | (b.get() & 255);
         return addr;
     }
+
     private static byte[] tail(ByteBuffer b) {
         byte[] data = new byte[b.remaining()];
         b.get(data);
         return data;
     }
+
     static void require(boolean ok) {
         if (!ok) throw new IllegalArgumentException("invalid packet");
     }

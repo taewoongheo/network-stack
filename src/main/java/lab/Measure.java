@@ -4,7 +4,9 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/** Parses Linux iputils ping -D -n output. One run, at most 65535 probes. */
+/**
+ * Parses Linux iputils ping -D -n output. One run, at most 65535 probes.
+ */
 public final class Measure {
     private static final Pattern REPLY = Pattern.compile(
             "^\\[([0-9.]+)\\].*icmp_seq=(\\d+).*time=([0-9.]+)\\s*ms");

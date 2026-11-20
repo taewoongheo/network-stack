@@ -7,13 +7,16 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-/** Commands are documented in the Checkpoint 7 handout. All elapsed times are milliseconds. */
+/**
+ * Commands are documented in the Checkpoint 7 handout. All elapsed times are milliseconds.
+ */
 public final class LabNet {
     static int ip(String address) throws IOException {
         byte[] bytes = InetAddress.getByName(address).getAddress();
         if (bytes.length != 4) throw new IllegalArgumentException("IPv4 address required");
         return ByteBuffer.wrap(bytes).getInt();
     }
+
     public static void main(String[] args) throws Exception {
         if (args.length == 0) throw new IllegalArgumentException("webget | router | client | server");
         switch (args[0]) {
@@ -23,7 +26,10 @@ public final class LabNet {
             default -> throw new IllegalArgumentException(args[0]);
         }
     }
-    private static long now() { return System.nanoTime() / 1_000_000; }
+
+    private static long now() {
+        return System.nanoTime() / 1_000_000;
+    }
 
     // Each link: ip,udpLocal,peerHost,udpPeer. Each route: prefix/length,index,nextHop-or-direct.
     private static void router(String[] specs) throws Exception {
@@ -51,7 +57,9 @@ public final class LabNet {
                 last = current;
                 router.route();
             }
-        } finally { links.forEach(UdpLink::close); }
+        } finally {
+            links.forEach(UdpLink::close);
+        }
     }
 
     // One full-duplex TCP conversation per process. Both peers stream a file and save their received bytes.
@@ -79,7 +87,8 @@ public final class LabNet {
                 last = current;
                 if (!outbound.isClosed() && outbound.availableCapacity() > 0) {
                     byte[] next = file.readNBytes(Math.min(8192, outbound.availableCapacity()));
-                    if (next.length == 0) outbound.close(); else outbound.push(next);
+                    if (next.length == 0) outbound.close();
+                    else outbound.push(next);
                 }
                 if (active) sender.push(send);
                 link.poll();

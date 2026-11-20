@@ -3,9 +3,12 @@ package lab;
 import java.util.*;
 
 public final class PathStats {
-    /** Index zero denotes the first probe. Missing replies have an empty RTT. */
+    /**
+     * Index zero denotes the first probe. Missing replies have an empty RTT.
+     */
     public record Summary(double deliveryRate, int longestSuccess, int longestLoss,
-                          double minRtt, double maxRtt) {}
+                          double minRtt, double maxRtt) {
+    }
 
     public static Summary summarize(List<OptionalDouble> rtts) {
         throw new UnsupportedOperationException("TODO PathStats.summarize");
