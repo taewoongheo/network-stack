@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+cd "$(dirname "$0")"
+./gradlew -q classes >&2
+exec java -cp build/classes/java/main lab.LabNet "$@"
