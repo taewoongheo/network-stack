@@ -3,7 +3,6 @@
 Open this directory as a Gradle project and select JDK 17. Use the same project for Checkpoints 0–7. Each week’s Lab directory contains the corresponding English handout, named `Checkpoint N - Java.pdf`.
 
 ```sh
-cd "$HOME/Desktop/network/Week 01/Lab/imp-java"
 ./gradlew test --tests lab.SupportTest
 ./gradlew test --tests lab.Check0Test
 ```
